@@ -53,33 +53,60 @@ st.markdown("""
 if mode == "🏠 Home":
     st.markdown("""
     ## 📘 About the Project
-    This application is developed as part of the ADS542 Final Project. It is designed to predict whether a customer is likely to subscribe to a term deposit based on various input features.
+    This application is part of the **ADS542 Final Project**, aimed at predicting whether a bank customer will **subscribe to a term deposit** based on their attributes and interactions.
 
-    ### 🔍 What you can do here:
-    - **📞 Predict: Before Call** → Predict customer subscription likelihood before calling.
-    - **📊 Predict: After Call** → Predict based on call duration and outcomes.
-    - **🤖 Ask the Assistant** → Chat with an AI-powered assistant trained on your dataset.
+    ### 🔍 What You Can Do:
+    - **📞 Predict: Before Call** → Estimate subscription likelihood *before* contacting the client.
+    - **📊 Predict: After Call** → Estimate likelihood *after* a call, using call duration & outcome.
+    - **🤖 Ask the Assistant** → Chat with an AI agent trained on your dataset and project setup.
 
     ### 🧠 Under the Hood:
-    - Two ensemble models used: **CatBoost** and **XGBoost**
-    - Data preprocessed and engineered into two modes: realistic (before call) and full (after call)
-    - Assistant is powered by **Groq LLMs** and understands both dataset and project context
+    - **Dataset**: UCI Bank Marketing Dataset (`bank-additional.csv`)
+    - **Goal**: Predict client subscription using ensemble models
+    - **Models**: Optimized ensemble of **CatBoost** and **XGBoost**
+    - **Modes**:
+        - **Realistic Model** → Used *before* the call, excludes `duration`
+        - **Full Model** → Used *after* the call, includes `duration` and `call_success`
+    - **Threshold**: 0.40 probability threshold used (instead of default 0.50) to improve **recall**
+    - **Ensemble**: Final prediction is an average of CatBoost and XGBoost probabilities
 
-    ### 🧾 Feature Descriptions:
-    - **Age**: Age of the customer.
-    - **Job**: Type of job (e.g., admin., student, technician).
-    - **Marital**: Marital status of the customer.
-    - **Education**: Education level.
-    - **Housing/Loan**: Does the customer have housing or personal loans?
-    - **Contact Type**: Communication type during the campaign.
-    - **Month/Day of Week**: Timing of the last contact.
-    - **Campaign/Pdays/Previous**: Contact history details.
-    - **Economic Indicators**: Key macroeconomic variables affecting outcome.
-    - **Call Duration**: Duration of contact (only for after-call predictions).
+    ### 🧪 ML Pipeline:
+    1. **Data Cleaning**:
+        - Replaced `'unknown'` with `NaN`
+        - Imputed missing values using **mode**
+        - Dropped duplicates and removed irrelevant features (like `default`)
+    2. **Feature Engineering**:
+        - `call_success`: 1 if `duration` > 0
+        - `has_previous_contact`: 1 if `previous` > 0
+    3. **Preprocessing**:
+        - **Numerical**: Scaled with `StandardScaler`
+        - **Categorical**: Encoded with `OneHotEncoder(handle_unknown='ignore')`
+        - Combined using `ColumnTransformer` and wrapped in a `Pipeline`
+    4. **Model Tuning**:
+        - Grid/Randomized Search used for XGBoost (F1/Recall)
+        - CatBoost tuned to 500 iterations
+        - SMOTE applied to handle class imbalance (oversample minority class)
+
+    ### 🧾 Key Features:
+    - **Age**: Customer age  
+    - **Job**: Occupation  
+    - **Marital**: Marital status  
+    - **Education**: Education level  
+    - **Housing/Loan**: Loan status  
+    - **Contact/Month/Day**: Campaign timing  
+    - **Campaign/Pdays/Previous**: Contact history  
+    - **Economic Indicators**: Includes employment rate, consumer price/confidence index, Euribor  
+    - **Duration**: Length of call (*only in After Call mode*)  
+
+    ### 💬 AI Assistant
+    - Built using **LangChain + Fireworks LLM**
+    - Can explain predictions, features, training process, and data insights
+    - Automatically cleans uploaded CSVs and supports exploratory questions
 
     ### 👤 Created by:
-    Ilyas Nayle — ML Engineer & Data Scientist
+    **Ilyas Nayle** — Machine Learning Engineer & Data Scientist
     """)
+
 
 # --------------------- Load Models and Preprocessors ---------------------
 @st.cache_resource
