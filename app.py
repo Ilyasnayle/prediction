@@ -8,7 +8,7 @@ from sklearn.ensemble import GradientBoostingClassifier
 from PIL import Image
 from dotenv import load_dotenv
 import os
-from langchain_fireworks import ChatFireworks
+from langchain_community.chat_models import ChatFireworks
 from langchain_experimental.agents.agent_toolkits import create_pandas_dataframe_agent
 from langchain.agents import AgentExecutor, AgentType, initialize_agent
 from langchain_core.messages import SystemMessage
