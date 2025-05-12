@@ -3,6 +3,7 @@ python-dotenv
 langchain-community
 langchain-experimental
 tabulate
+langchain-fireworks
 fireworks-ai
 altair==5.5.0
 annotated-types==0.7.0
