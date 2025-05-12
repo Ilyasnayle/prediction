@@ -102,31 +102,32 @@ if mode == "📞 Predict: Before Call":
     st.info("This uses the Realistic Model (no call duration features).")
     st.caption("ℹ️ Hover over the (i) icon next to each input field to learn more.")
     with st.expander("ℹ️ Feature Guide"):
-     st.markdown("""
-    **Features used in this model:**
-
-    - **AGE**: age — Age of the customer
-    - **JOB**: job — Type of job (e.g., admin., technician)
-    - **MARITAL**: marital — Marital status
-    - **EDUCATION**: education — Education level
-    - **HOUSING**: housing — Has housing loan?
-    - **LOAN**: loan — Has personal loan?
-    - **CONTACT**: contact — Type of communication used during the campaign
-    - **MONTH**: month — Month of last contact
-    - **DAY_OF_WEEK**: day_of_week — Day of week of last contact
-    - **CAMPAIGN**: campaign — Number of contacts during this campaign
-    - **PDAYS**: pdays — Days since last contact (999 means never contacted)
-    - **PREVIOUS**: previous — Number of contacts before this campaign
-    - **POUTCOME**: poutcome — Outcome of previous campaign
-    - **EMP.VAR.RATE**: emp.var.rate — Quarterly employment variation rate
-    - **CONS.PRICE.IDX**: cons.price.idx — Monthly consumer price index
-    - **CONS.CONF.IDX**: cons.conf.idx — Consumer confidence index
-    - **EURIBOR3M**: euribor3m — 3-month Euribor rate
-    - **NR.EMPLOYED**: nr.employed — Average number of employees in the economy
-    - **HAS_PREVIOUS_CONTACT**: has_previous_contact — 1 if previous > 0 (engineered feature)
-    - **DURATION** *(After Call only)*: duration — Duration of the last call in seconds
-    - **CALL_SUCCESS** *(After Call only)*: call_success — 1 if call duration > 0 (engineered)
-    """)
+        st.markdown("""
+        **Features used in this model:**
+    
+        - **AGE**: `age` — Age of the customer  
+        - **JOB**: `job` — Type of job (e.g., admin., technician)  
+        - **MARITAL**: `marital` — Marital status  
+        - **EDUCATION**: `education` — Education level  
+        - **HOUSING**: `housing` — Has housing loan?  
+        - **LOAN**: `loan` — Has personal loan?  
+        - **CONTACT**: `contact` — Contact communication method  
+        - **MONTH**: `month` — Last contact month  
+        - **DAY_OF_WEEK**: `day_of_week` — Day of last contact  
+        - **CAMPAIGN**: `campaign` — Number of contacts in this campaign  
+        - **PDAYS**: `pdays` — Days since last contact (999 = never)  
+        - **PREVIOUS**: `previous` — Number of past contacts  
+        - **POUTCOME**: `poutcome` — Outcome of previous campaign  
+        - **EMP.VAR.RATE**: `emp.var.rate` — Employment variation rate  
+        - **CONS.PRICE.IDX**: `cons.price.idx` — Consumer price index  
+        - **CONS.CONF.IDX**: `cons.conf.idx` — Confidence index  
+        - **EURIBOR3M**: `euribor3m` — 3-month Euribor rate  
+        - **NR.EMPLOYED**: `nr.employed` — Number of employees  
+        - **HAS_PREVIOUS_CONTACT**: `has_previous_contact` — 1 if previous > 0  
+        - **DURATION** *(After Call only)*: `duration` — Duration of call in seconds  
+        - **CALL_SUCCESS** *(After Call only)*: `call_success` — 1 if duration > 0  
+        """)
+    
 
 
     with st.form("realistic_form"):
@@ -265,29 +266,31 @@ elif mode == "📊 Predict: After Call":
 
     with st.expander("ℹ️ Feature Guide"):
         st.markdown("""
-    **Features used in this model:**
-    - **AGE**: age — Age of the customer
-    - **JOB**: job — Type of job (e.g., admin., technician)
-    - **MARITAL**: marital — Marital status
-    - **EDUCATION**: education — Education level
-    - **HOUSING**: housing — Has housing loan?
-    - **LOAN**: loan — Has personal loan?
-    - **CONTACT**: contact — Type of communication used during the campaign
-    - **MONTH**: month — Month of last contact
-    - **DAY_OF_WEEK**: day_of_week — Day of week of last contact
-    - **CAMPAIGN**: campaign — Number of contacts during this campaign
-    - **PDAYS**: pdays — Days since last contact (999 means never contacted)
-    - **PREVIOUS**: previous — Number of contacts before this campaign
-    - **POUTCOME**: poutcome — Outcome of previous campaign
-    - **EMP.VAR.RATE**: emp.var.rate — Quarterly employment variation rate
-    - **CONS.PRICE.IDX**: cons.price.idx — Monthly consumer price index
-    - **CONS.CONF.IDX**: cons.conf.idx — Consumer confidence index
-    - **EURIBOR3M**: euribor3m — 3-month Euribor rate
-    - **NR.EMPLOYED**: nr.employed — Average number of employees in the economy
-    - **HAS_PREVIOUS_CONTACT**: has_previous_contact — 1 if previous > 0 (engineered feature)
-    - **DURATION** *(After Call only)*: duration — Duration of the last call in seconds
-    - **CALL_SUCCESS** *(After Call only)*: call_success — 1 if call duration > 0 (engineered)
-    """)   
+        **Features used in this model:**
+    
+        - **AGE**: `age` — Age of the customer  
+        - **JOB**: `job` — Type of job (e.g., admin., technician)  
+        - **MARITAL**: `marital` — Marital status  
+        - **EDUCATION**: `education` — Education level  
+        - **HOUSING**: `housing` — Has housing loan?  
+        - **LOAN**: `loan` — Has personal loan?  
+        - **CONTACT**: `contact` — Contact communication method  
+        - **MONTH**: `month` — Last contact month  
+        - **DAY_OF_WEEK**: `day_of_week` — Day of last contact  
+        - **CAMPAIGN**: `campaign` — Number of contacts in this campaign  
+        - **PDAYS**: `pdays` — Days since last contact (999 = never)  
+        - **PREVIOUS**: `previous` — Number of past contacts  
+        - **POUTCOME**: `poutcome` — Outcome of previous campaign  
+        - **EMP.VAR.RATE**: `emp.var.rate` — Employment variation rate  
+        - **CONS.PRICE.IDX**: `cons.price.idx` — Consumer price index  
+        - **CONS.CONF.IDX**: `cons.conf.idx` — Confidence index  
+        - **EURIBOR3M**: `euribor3m` — 3-month Euribor rate  
+        - **NR.EMPLOYED**: `nr.employed` — Number of employees  
+        - **HAS_PREVIOUS_CONTACT**: `has_previous_contact` — 1 if previous > 0  
+        - **DURATION** *(After Call only)*: `duration` — Duration of call in seconds  
+        - **CALL_SUCCESS** *(After Call only)*: `call_success` — 1 if duration > 0  
+        """)
+
 
 
     @st.cache_resource
