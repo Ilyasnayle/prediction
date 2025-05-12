@@ -52,7 +52,7 @@ st.markdown("""
 # --------------------- Home ---------------------
 if mode == "🏠 Home":
     st.markdown("""
-    ## 📘 About the Project
+    📘 About the Project
         This application is part of the **ADS542 Final Project**, aimed at predicting whether a bank customer will **subscribe to a term deposit** based on their attributes and interactions.
         
         🔍 What You Can Do:
