@@ -53,59 +53,73 @@ st.markdown("""
 if mode == "🏠 Home":
     st.markdown("""
     ## 📘 About the Project
-    This application is part of the **ADS542 Final Project**, aimed at predicting whether a bank customer will **subscribe to a term deposit** based on their attributes and interactions.
+        This application is part of the **ADS542 Final Project**, aimed at predicting whether a bank customer will **subscribe to a term deposit** based on their attributes and interactions.
+        
+        🔍 What You Can Do:
+        - **📞 Predict: Before Call** → Estimate subscription likelihood *before* contacting the client.
+        - **📊 Predict: After Call** → Estimate likelihood *after* a call, using call duration & outcome.
+        - **🤖 Ask the Assistant** → Chat with an AI agent that understands your dataset and project context.
+        
+        🧠 Under the Hood:
+        - **Dataset**: UCI Bank Marketing Dataset (`bank-additional.csv`)
+        - **Goal**: Predict client subscription using ensemble models
+        - **Models**: Optimized ensemble of **CatBoost** and **XGBoost**
+        - **Modes**:
+            - **Realistic Model** → Used *before* the call, excludes `duration`
+            - **Full Model** → Used *after* the call, includes `duration` and `call_success`
+        - **Threshold**: 0.40 probability threshold (instead of 0.50) to boost **recall**
+        - **Ensemble Strategy**: Soft voting — average of CatBoost and XGBoost probabilities
+        
+        🧪 ML Pipeline:
+        1. **Data Cleaning**:
+           - Replaced `'unknown'` with `NaN`
+           - Imputed missing values using **mode**
+           - Dropped duplicates and irrelevant features (`default`)
+        2. **Feature Engineering**:
+           - `call_success`: 1 if `duration` > 0
+           - `has_previous_contact`: 1 if `previous` > 0
+        3. **Preprocessing**:
+           - **Numerical**: Scaled with `StandardScaler`
+           - **Categorical**: Encoded with `OneHotEncoder(handle_unknown='ignore')`
+           - Combined using `ColumnTransformer`, wrapped in a `Pipeline`
+        4. **Model Tuning**:
+           - **XGBoost**: Tuned with `RandomizedSearchCV` (optimized for F1/Recall)
+           - **CatBoost**: Tuned to 500 iterations (F1 optimized)
+           - **SMOTE**: Applied after preprocessing to oversample the minority class
+        
+        🧾 Key Features Used in the Models:
+        
+        - **AGE**: `age` — Age of the customer  
+        - **JOB**: `job` — Type of job (e.g., admin., technician)  
+        - **MARITAL**: `marital` — Marital status  
+        - **EDUCATION**: `education` — Education level  
+        - **HOUSING**: `housing` — Has housing loan?  
+        - **LOAN**: `loan` — Has personal loan?  
+        - **CONTACT**: `contact` — Communication method during the campaign  
+        - **MONTH**: `month` — Month of last contact  
+        - **DAY_OF_WEEK**: `day_of_week` — Day of the week of last contact  
+        - **CAMPAIGN**: `campaign` — Number of contacts during this campaign  
+        - **PDAYS**: `pdays` — Days since last contact (999 = never contacted)  
+        - **PREVIOUS**: `previous` — Number of past contacts  
+        - **POUTCOME**: `poutcome` — Outcome of previous campaign  
+        - **EMP.VAR.RATE**: `emp.var.rate` — Quarterly employment variation  
+        - **CONS.PRICE.IDX**: `cons.price.idx` — Consumer price index  
+        - **CONS.CONF.IDX**: `cons.conf.idx` — Consumer confidence index  
+        - **EURIBOR3M**: `euribor3m` — 3-month Euribor interest rate  
+        - **NR.EMPLOYED**: `nr.employed` — Average number of employees  
+        - **CALL_SUCCESS**: `call_success` — 1 if duration > 0 (engineered)  
+        - **HAS_PREVIOUS_CONTACT**: `has_previous_contact` — 1 if previous > 0 (engineered)  
+        - **DURATION** *(Full Model only)*: `duration` — Length of last call in seconds  
 
-    ### 🔍 What You Can Do:
-    - **📞 Predict: Before Call** → Estimate subscription likelihood *before* contacting the client.
-    - **📊 Predict: After Call** → Estimate likelihood *after* a call, using call duration & outcome.
-    - **🤖 Ask the Assistant** → Chat with an AI agent trained on your dataset and project setup.
-
-    ### 🧠 Under the Hood:
-    - **Dataset**: UCI Bank Marketing Dataset (`bank-additional.csv`)
-    - **Goal**: Predict client subscription using ensemble models
-    - **Models**: Optimized ensemble of **CatBoost** and **XGBoost**
-    - **Modes**:
-        - **Realistic Model** → Used *before* the call, excludes `duration`
-        - **Full Model** → Used *after* the call, includes `duration` and `call_success`
-    - **Threshold**: 0.40 probability threshold used (instead of default 0.50) to improve **recall**
-    - **Ensemble**: Final prediction is an average of CatBoost and XGBoost probabilities
-
-    ### 🧪 ML Pipeline:
-    1. **Data Cleaning**:
-        - Replaced `'unknown'` with `NaN`
-        - Imputed missing values using **mode**
-        - Dropped duplicates and removed irrelevant features (like `default`)
-    2. **Feature Engineering**:
-        - `call_success`: 1 if `duration` > 0
-        - `has_previous_contact`: 1 if `previous` > 0
-    3. **Preprocessing**:
-        - **Numerical**: Scaled with `StandardScaler`
-        - **Categorical**: Encoded with `OneHotEncoder(handle_unknown='ignore')`
-        - Combined using `ColumnTransformer` and wrapped in a `Pipeline`
-    4. **Model Tuning**:
-        - Grid/Randomized Search used for XGBoost (F1/Recall)
-        - CatBoost tuned to 500 iterations
-        - SMOTE applied to handle class imbalance (oversample minority class)
-
-    ### 🧾 Key Features:
-    - **Age**: Customer age  
-    - **Job**: Occupation  
-    - **Marital**: Marital status  
-    - **Education**: Education level  
-    - **Housing/Loan**: Loan status  
-    - **Contact/Month/Day**: Campaign timing  
-    - **Campaign/Pdays/Previous**: Contact history  
-    - **Economic Indicators**: Includes employment rate, consumer price/confidence index, Euribor  
-    - **Duration**: Length of call (*only in After Call mode*)  
-
-    ### 💬 AI Assistant
-    - Built using **LangChain + Fireworks LLM**
-    - Can explain predictions, features, training process, and data insights
-    - Automatically cleans uploaded CSVs and supports exploratory questions
-
-    ### 👤 Created by:
-    **Ilyas Nayle** — Machine Learning Engineer & Data Scientist
-    """)
+        
+        💬 AI Assistant:
+        - Built using **LangChain + Fireworks LLM**
+        - Can explain predictions, features, training process, and data insights
+        - Dynamically analyzes uploaded CSVs and answers exploratory questions (not fine-tuned)
+        
+        👤 Created by:
+        **Ilyas Nayle** — Machine Learning Engineer & Data Scientist"""
+        )
 
 
 # --------------------- Load Models and Preprocessors ---------------------
