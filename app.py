@@ -418,8 +418,6 @@ elif mode == "📊 Predict: After Call":
         else:
             st.error("❌ The customer is unlikely to subscribe.")
         st.metric("Confidence Score", f"{ensemble_pred[0]*100:.2f}%")
-        st.metric("Confidence Score", f"{ensemble_pred[0]*100:.2f}%")
-
         # 🔍 Confidence Explanation
         confidence = ensemble_pred[0]
         if 0.40 <= confidence < 0.6:
