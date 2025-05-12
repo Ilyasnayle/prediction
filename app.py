@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # --------------------- Page Config ---------------------
 import streamlit as st
 import pandas as pd
@@ -117,8 +118,9 @@ This application is part of the **ADS542 Final Project**, aimed at predicting wh
 
 ### 👤 Created by:
 **Ilyas Nayle** — Machine Learning Engineer & Data Scientist
-st.markdown(
-"""---📎 **Connect with me**: [LinkedIn – Ilyas Nayle](https://www.linkedin.com/in/ilyasnayle/)""")
+st.markdown("""
+---
+📎 **Connect with me**: [LinkedIn – Ilyas Nayle](https://www.linkedin.com/in/ilyasnayle/)
 """)
 
 
