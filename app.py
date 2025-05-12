@@ -8,7 +8,7 @@ from sklearn.ensemble import GradientBoostingClassifier
 from PIL import Image
 from dotenv import load_dotenv
 import os
-from langchain_community.chat_models import ChatFireworks
+from langchain_fireworks import ChatFireworks
 from langchain_experimental.agents.agent_toolkits import create_pandas_dataframe_agent
 from langchain.agents import AgentExecutor, AgentType, initialize_agent
 from langchain_core.messages import SystemMessage
@@ -100,43 +100,90 @@ xgb_real, cb_real, prep_real, xgb_full, cb_full, prep_full = load_models()
 if mode == "📞 Predict: Before Call":
     st.subheader("📞 Predict if a customer will subscribe — before the call")
     st.info("This uses the Realistic Model (no call duration features).")
+    st.caption("ℹ️ Hover over the (i) icon next to each input field to learn more.")
+    with st.expander("ℹ️ Feature Guide"):
+     st.markdown("""
+    **Features used in this model:**
+
+    - **AGE**: age — Age of the customer
+    - **JOB**: job — Type of job (e.g., admin., technician)
+    - **MARITAL**: marital — Marital status
+    - **EDUCATION**: education — Education level
+    - **HOUSING**: housing — Has housing loan?
+    - **LOAN**: loan — Has personal loan?
+    - **CONTACT**: contact — Type of communication used during the campaign
+    - **MONTH**: month — Month of last contact
+    - **DAY_OF_WEEK**: day_of_week — Day of week of last contact
+    - **CAMPAIGN**: campaign — Number of contacts during this campaign
+    - **PDAYS**: pdays — Days since last contact (999 means never contacted)
+    - **PREVIOUS**: previous — Number of contacts before this campaign
+    - **POUTCOME**: poutcome — Outcome of previous campaign
+    - **EMP.VAR.RATE**: emp.var.rate — Quarterly employment variation rate
+    - **CONS.PRICE.IDX**: cons.price.idx — Monthly consumer price index
+    - **CONS.CONF.IDX**: cons.conf.idx — Consumer confidence index
+    - **EURIBOR3M**: euribor3m — 3-month Euribor rate
+    - **NR.EMPLOYED**: nr.employed — Average number of employees in the economy
+    - **HAS_PREVIOUS_CONTACT**: has_previous_contact — 1 if previous > 0 (engineered feature)
+    - **DURATION** *(After Call only)*: duration — Duration of the last call in seconds
+    - **CALL_SUCCESS** *(After Call only)*: call_success — 1 if call duration > 0 (engineered)
+    """)
+
 
     with st.form("realistic_form"):
         st.markdown("### ✍️ Customer Information")
         col1, col2, col3 = st.columns(3)
 
         with col1:
-            age = st.number_input("Age", 18, 100, step=1)
+            age = st.number_input("Age", 18, 100, step=1, help="Customer's age in years.")
             job = st.selectbox("Job", ['admin.', 'blue-collar', 'entrepreneur', 'housemaid', 'management', 'retired',
-                                       'self-employed', 'services', 'student', 'technician', 'unemployed', 'unknown'])
-            marital = st.selectbox("Marital Status", ['married', 'single', 'divorced', 'unknown'])
+                                       'self-employed', 'services', 'student', 'technician', 'unemployed', 'unknown'],
+                                 help="Occupation type (e.g., admin., student, technician).")
+            marital = st.selectbox("Marital Status", ['married', 'single', 'divorced', 'unknown'],
+                                   help="Customer's marital status.")
             education = st.selectbox("Education", ['basic.4y', 'basic.6y', 'basic.9y', 'high.school',
-                                                   'professional.course', 'university.degree', 'illiterate', 'unknown'])
+                                                   'professional.course', 'university.degree', 'illiterate', 'unknown'],
+                                     help="Customer's highest level of education.")
 
         with col2:
-            housing = st.selectbox("Housing Loan", ['yes', 'no', 'unknown'])
-            loan = st.selectbox("Personal Loan", ['yes', 'no', 'unknown'])
-            contact = st.selectbox("Contact Type", ['cellular', 'telephone'])
+            housing = st.selectbox("Housing Loan", ['yes', 'no', 'unknown'],
+                                   help="Does the customer have a housing loan?")
+            loan = st.selectbox("Personal Loan", ['yes', 'no', 'unknown'],
+                                help="Does the customer have a personal loan?")
+            contact = st.selectbox("Contact Type", ['cellular', 'telephone'],
+                                   help="Type of communication used during the campaign.")
             month = st.selectbox("Last Contact Month", ['jan', 'feb', 'mar', 'apr', 'may', 'jun',
-                                                        'jul', 'aug', 'sep', 'oct', 'nov', 'dec'])
+                                                        'jul', 'aug', 'sep', 'oct', 'nov', 'dec'],
+                                 help="Month of last campaign contact.")
 
         with col3:
-            day_of_week = st.selectbox("Day of Week", ['mon', 'tue', 'wed', 'thu', 'fri'])
-            campaign = st.number_input("Number of Contacts in Campaign", 1, 100, step=1)
-            pdays = st.number_input("Days Since Last Contact", 0, 999, step=1)
-            previous = st.number_input("Previous Contacts", 0, 50, step=1)
+            day_of_week = st.selectbox("Day of Week", ['mon', 'tue', 'wed', 'thu', 'fri'],
+                                       help="Day of week of last contact.")
+            campaign = st.number_input("Number of Contacts in Campaign", 1, 100, step=1,
+                                       help="Number of contacts performed during this campaign.")
+            pdays = st.number_input("Days Since Last Contact", 0, 999, step=1,
+                                    help="Days since the client was last contacted (999 means never).")
+            previous = st.number_input("Previous Contacts", 0, 50, step=1,
+                                       help="Number of contacts performed before this campaign.")
 
         st.markdown("### 📊 Economic Indicators")
         col4, col5 = st.columns(2)
         with col4:
-            emp_var_rate = st.number_input("Employment Variation Rate", -3.0, 2.0, step=0.1)
-            cons_price_idx = st.number_input("Consumer Price Index", 92.0, 95.0, step=0.01)
+            emp_var_rate = st.number_input("Employment Variation Rate", -3.0, 2.0, step=0.1,
+                                          help="Quarterly employment variation (economic indicator).")
+            cons_price_idx = st.number_input("Consumer Price Index", 92.0, 95.0, step=0.01,
+                                             help="Monthly consumer price index.")
         with col5:
-            cons_conf_idx = st.number_input("Consumer Confidence Index", -50.0, -20.0, step=0.1)
-            euribor3m = st.number_input("3-Month Euribor Rate", 0.0, 5.0, step=0.01)
-            nr_employed = st.number_input("Number of Employees", 4800.0, 5500.0, step=1.0)
+            cons_conf_idx = st.number_input("Consumer Confidence Index", -50.0, -20.0, step=0.1,
+                                           help="Consumer confidence indicator.")
+            euribor3m = st.number_input("3-Month Euribor Rate", 0.0, 5.0, step=0.01,
+                                       help="Interest rate for 3-month Euribor.")
+            nr_employed = st.number_input("Number of Employees", 4800.0, 5500.0, step=1.0,
+                                          help="Average number of employees in the economy.")
 
-        poutcome = st.selectbox("Previous Outcome", ['nonexistent', 'failure', 'success'])
+        poutcome = st.selectbox("Previous Outcome", ['nonexistent', 'failure', 'success'],
+                                help="Outcome of the previous marketing campaign.")
+
+
         submitted = st.form_submit_button("🔮 Predict")
 
     if submitted:
@@ -214,6 +261,34 @@ if mode == "📞 Predict: Before Call":
 elif mode == "📊 Predict: After Call":
     st.subheader("📊 Predict if a customer will subscribe — after the call")
     st.info("This uses the Full Model (with duration, call success, etc).")
+    st.caption("ℹ️ Hover over the (i) icon next to each input field to learn more.")
+
+    with st.expander("ℹ️ Feature Guide"):
+        st.markdown("""
+    **Features used in this model:**
+    - **AGE**: age — Age of the customer
+    - **JOB**: job — Type of job (e.g., admin., technician)
+    - **MARITAL**: marital — Marital status
+    - **EDUCATION**: education — Education level
+    - **HOUSING**: housing — Has housing loan?
+    - **LOAN**: loan — Has personal loan?
+    - **CONTACT**: contact — Type of communication used during the campaign
+    - **MONTH**: month — Month of last contact
+    - **DAY_OF_WEEK**: day_of_week — Day of week of last contact
+    - **CAMPAIGN**: campaign — Number of contacts during this campaign
+    - **PDAYS**: pdays — Days since last contact (999 means never contacted)
+    - **PREVIOUS**: previous — Number of contacts before this campaign
+    - **POUTCOME**: poutcome — Outcome of previous campaign
+    - **EMP.VAR.RATE**: emp.var.rate — Quarterly employment variation rate
+    - **CONS.PRICE.IDX**: cons.price.idx — Monthly consumer price index
+    - **CONS.CONF.IDX**: cons.conf.idx — Consumer confidence index
+    - **EURIBOR3M**: euribor3m — 3-month Euribor rate
+    - **NR.EMPLOYED**: nr.employed — Average number of employees in the economy
+    - **HAS_PREVIOUS_CONTACT**: has_previous_contact — 1 if previous > 0 (engineered feature)
+    - **DURATION** *(After Call only)*: duration — Duration of the last call in seconds
+    - **CALL_SUCCESS** *(After Call only)*: call_success — 1 if call duration > 0 (engineered)
+    """)   
+
 
     @st.cache_resource
     def load_full_models():
@@ -230,42 +305,55 @@ elif mode == "📊 Predict: After Call":
         col1, col2, col3 = st.columns(3)
 
         with col1:
-            age = st.number_input("Age", 18, 100, step=1)
+            age = st.number_input("Age", 18, 100, step=1, help="Customer's age in years.")
             job = st.selectbox("Job", ['admin.', 'blue-collar', 'entrepreneur', 'housemaid',
                                        'management', 'retired', 'self-employed', 'services',
-                                       'student', 'technician', 'unemployed', 'unknown'])
-            marital = st.selectbox("Marital Status", ['married', 'single', 'divorced', 'unknown'])
+                                       'student', 'technician', 'unemployed', 'unknown'],
+                                 help="Occupation type (e.g., admin., student, technician).")
+            marital = st.selectbox("Marital Status", ['married', 'single', 'divorced', 'unknown'],
+                                   help="Customer's marital status.")
             education = st.selectbox("Education", ['basic.4y', 'basic.6y', 'basic.9y', 'high.school',
                                                    'professional.course', 'university.degree',
-                                                   'illiterate', 'unknown'])
+                                                   'illiterate', 'unknown'],
+                                     help="Customer's highest level of education.")
 
         with col2:
-            housing = st.selectbox("Housing Loan", ['yes', 'no', 'unknown'])
-            loan = st.selectbox("Personal Loan", ['yes', 'no', 'unknown'])
-            contact = st.selectbox("Contact Type", ['cellular', 'telephone'])
+            housing = st.selectbox("Housing Loan", ['yes', 'no', 'unknown'], help="Does the customer have a housing loan?")
+            loan = st.selectbox("Personal Loan", ['yes', 'no', 'unknown'], help="Does the customer have a personal loan?")
+            contact = st.selectbox("Contact Type", ['cellular', 'telephone'], help="Type of communication used during the campaign.")
             month = st.selectbox("Last Contact Month", ['jan', 'feb', 'mar', 'apr', 'may', 'jun',
-                                                        'jul', 'aug', 'sep', 'oct', 'nov', 'dec'])
+                                                        'jul', 'aug', 'sep', 'oct', 'nov', 'dec'],
+                                 help="Month of last campaign contact.")
 
         with col3:
-            day_of_week = st.selectbox("Day of Week", ['mon', 'tue', 'wed', 'thu', 'fri'])
-            duration = st.number_input("Call Duration (seconds)", 0, 2000, step=1)
-            campaign = st.number_input("Number of Contacts in Campaign", 1, 100, step=1)
-            pdays = st.number_input("Days Since Last Contact", 0, 999, step=1)
-            previous = st.number_input("Previous Contacts", 0, 50, step=1)
+            day_of_week = st.selectbox("Day of Week", ['mon', 'tue', 'wed', 'thu', 'fri'], help="Day of week of last contact.")
+            duration = st.number_input("Call Duration (seconds)", 0, 2000, step=1,
+                                      help="Duration of the marketing call in seconds.")
+            campaign = st.number_input("Number of Contacts in Campaign", 1, 100, step=1,
+                                       help="Number of contacts performed during this campaign.")
+            pdays = st.number_input("Days Since Last Contact", 0, 999, step=1,
+                                    help="Days since the client was last contacted (999 means never).")
+            previous = st.number_input("Previous Contacts", 0, 50, step=1,
+                                       help="Number of contacts performed before this campaign.")
 
         st.markdown("### 📊 Economic Indicators")
         col4, col5 = st.columns(2)
         with col4:
-            emp_var_rate = st.number_input("Employment Variation Rate", -3.0, 2.0, step=0.1)
-            cons_price_idx = st.number_input("Consumer Price Index", 92.0, 95.0, step=0.01)
+            emp_var_rate = st.number_input("Employment Variation Rate", -3.0, 2.0, step=0.1,
+                                          help="Quarterly employment variation (economic indicator).")
+            cons_price_idx = st.number_input("Consumer Price Index", 92.0, 95.0, step=0.01,
+                                             help="Monthly consumer price index.")
         with col5:
-            cons_conf_idx = st.number_input("Consumer Confidence Index", -50.0, -20.0, step=0.1)
-            euribor3m = st.number_input("3-Month Euribor Rate", 0.0, 5.0, step=0.01)
-            nr_employed = st.number_input("Number of Employees", 4800.0, 5500.0, step=1.0)
+            cons_conf_idx = st.number_input("Consumer Confidence Index", -50.0, -20.0, step=0.1,
+                                           help="Consumer confidence indicator.")
+            euribor3m = st.number_input("3-Month Euribor Rate", 0.0, 5.0, step=0.01,
+                                       help="Interest rate for 3-month Euribor.")
+            nr_employed = st.number_input("Number of Employees", 4800.0, 5500.0, step=1.0,
+                                          help="Average number of employees in the economy.")
 
-        poutcome = st.selectbox("Previous Outcome", ['nonexistent', 'failure', 'success'])
+        poutcome = st.selectbox("Previous Outcome", ['nonexistent', 'failure', 'success'],
+                                help="Outcome of the previous marketing campaign.")
         submitted = st.form_submit_button("🔮 Predict")
-
     if submitted:
         input_data = pd.DataFrame([{ 'age': age, 'job': job, 'marital': marital,
                                      'education': education, 'housing': housing, 'loan': loan, 'contact': contact,
