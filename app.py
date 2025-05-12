@@ -405,7 +405,7 @@ elif mode == "🤖 Ask the Assistant":
                     from langchain.prompts import PromptTemplate
 
                     llm = ChatFireworks(
-                        model="accounts/fireworks/models/llama-v3p1-405b-instruct",
+                        model="accounts/fireworks/models/llama-v3p3-70b-instruct",
                         api_key=fireworks_api_key,
                         
                     )
