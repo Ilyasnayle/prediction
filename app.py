@@ -237,14 +237,25 @@ if mode == "📞 Predict: Before Call":
             st.error("❌ The customer is unlikely to subscribe.")
         st.metric("Confidence Score", f"{ensemble_pred[0]*100:.2f}%")
 
-        # 🔍 Confidence Explanation
-        confidence = ensemble_pred[0]
-        if 0.40 <= confidence < 0.6:
-            st.caption("⚠️ *Borderline prediction*: The customer is slightly likely to subscribe. Use additional info when deciding.")
-        elif confidence >= 0.6:
-            st.caption("✅ *High confidence*: The customer shows strong signs of subscribing.")
+        confidence_score = ensemble_pred[0] * 100
+        
+        # Custom confidence bar color based on range
+        if confidence_score >= 55:
+            confidence_color = "green"
+            confidence_msg = "✅ High confidence — strong likelihood of subscription."
+        elif confidence_score >= 40:
+            confidence_color = "orange"
+            confidence_msg = "⚠️ Borderline prediction — consider additional factors before deciding."
         else:
-            st.caption("❌ *Low confidence*: The model predicts low likelihood of subscription.")
+            confidence_color = "red"
+            confidence_msg = "❌ Low confidence — unlikely to subscribe."
+        
+        # Display
+        st.markdown(
+            f"<div style='border-left: 5px solid {confidence_color}; padding: 0.5em;'>"
+            f"<b>Confidence Score:</b> {confidence_score:.2f}%<br>{confidence_msg}</div>",
+            unsafe_allow_html=True
+        )
 
 
         # ── NEW: Realistic Model Feature Importance ──
@@ -418,14 +429,25 @@ elif mode == "📊 Predict: After Call":
         else:
             st.error("❌ The customer is unlikely to subscribe.")
         st.metric("Confidence Score", f"{ensemble_pred[0]*100:.2f}%")
-        # 🔍 Confidence Explanation
-        confidence = ensemble_pred[0]
-        if 0.40 <= confidence < 0.6:
-            st.caption("⚠️ *Borderline prediction*: The customer is slightly likely to subscribe. Use additional info when deciding.")
-        elif confidence >= 0.6:
-            st.caption("✅ *High confidence*: The customer shows strong signs of subscribing.")
+        confidence_score = ensemble_pred[0] * 100
+        
+        # Custom confidence bar color based on range
+        if confidence_score >= 55:
+            confidence_color = "green"
+            confidence_msg = "✅ High confidence — strong likelihood of subscription."
+        elif confidence_score >= 40:
+            confidence_color = "orange"
+            confidence_msg = "⚠️ Borderline prediction — consider additional factors before deciding."
         else:
-            st.caption("❌ *Low confidence*: The model predicts low likelihood of subscription.")
+            confidence_color = "red"
+            confidence_msg = "❌ Low confidence — unlikely to subscribe."
+        
+        # Display
+        st.markdown(
+            f"<div style='border-left: 5px solid {confidence_color}; padding: 0.5em;'>"
+            f"<b>Confidence Score:</b> {confidence_score:.2f}%<br>{confidence_msg}</div>",
+            unsafe_allow_html=True
+        )
 
         # ── NEW: Full Model Feature Importance ──
         st.markdown("### 🔍 Full Model Top 10 Features")
