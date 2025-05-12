@@ -240,7 +240,7 @@ if mode == "📞 Predict: Before Call":
         confidence_score = ensemble_pred[0] * 100
         
         # Custom confidence bar color based on range
-        if confidence_score >= 55:
+        if confidence_score >= 58:
             confidence_color = "green"
             confidence_msg = "✅ High confidence — strong likelihood of subscription."
         elif confidence_score >= 40:
@@ -432,7 +432,7 @@ elif mode == "📊 Predict: After Call":
         confidence_score = ensemble_pred[0] * 100
         
         # Custom confidence bar color based on range
-        if confidence_score >= 55:
+        if confidence_score >= 58:
             confidence_color = "green"
             confidence_msg = "✅ High confidence — strong likelihood of subscription."
         elif confidence_score >= 40:
