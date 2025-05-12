@@ -237,6 +237,16 @@ if mode == "📞 Predict: Before Call":
             st.error("❌ The customer is unlikely to subscribe.")
         st.metric("Confidence Score", f"{ensemble_pred[0]*100:.2f}%")
 
+        # 🔍 Confidence Explanation
+        confidence = ensemble_pred[0]
+        if 0.40 <= confidence < 0.6:
+            st.caption("⚠️ *Borderline prediction*: The customer is slightly likely to subscribe. Use additional info when deciding.")
+        elif confidence >= 0.6:
+            st.caption("✅ *High confidence*: The customer shows strong signs of subscribing.")
+        else:
+            st.caption("❌ *Low confidence*: The model predicts low likelihood of subscription.")
+
+
         # ── NEW: Realistic Model Feature Importance ──
         st.markdown("### 🔍 Realistic Model Top 10 Features")
         feat_names = prep_real.get_feature_names_out()
@@ -408,6 +418,16 @@ elif mode == "📊 Predict: After Call":
         else:
             st.error("❌ The customer is unlikely to subscribe.")
         st.metric("Confidence Score", f"{ensemble_pred[0]*100:.2f}%")
+        st.metric("Confidence Score", f"{ensemble_pred[0]*100:.2f}%")
+
+        # 🔍 Confidence Explanation
+        confidence = ensemble_pred[0]
+        if 0.40 <= confidence < 0.6:
+            st.caption("⚠️ *Borderline prediction*: The customer is slightly likely to subscribe. Use additional info when deciding.")
+        elif confidence >= 0.6:
+            st.caption("✅ *High confidence*: The customer shows strong signs of subscribing.")
+        else:
+            st.caption("❌ *Low confidence*: The model predicts low likelihood of subscription.")
 
         # ── NEW: Full Model Feature Importance ──
         st.markdown("### 🔍 Full Model Top 10 Features")
